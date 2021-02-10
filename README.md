@@ -24,9 +24,9 @@ yarn install
 ## Setup  example
 
 ```
-DB_USER= root
-DB_PASS= 
-DB_NAME= db_zwallet
+database user = root
+database password = ''
+database name = crud
 
 ```
 
