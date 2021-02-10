@@ -24,13 +24,13 @@ yarn install
 Development mode
 
 ```bash
-yarn run dev
+npm run devServer
 ```
 
 Deploy mode
 
 ```bash
-yarn start
+npm start
 ```
 
 ## Contributing
