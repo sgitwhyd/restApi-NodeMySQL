@@ -11,13 +11,24 @@
 * [Sezuelize](https://sequelize.org/)
 ## Installation
 
-Clone this repository and then use the package manager yarn to install dependencies.
+Clone this repository and then use the package manager npm or yarn to install dependencies.
 
 
+```bash
+npm install
+```
 ```bash
 yarn install
 ```
 
+## Setup  example
+
+```
+DB_USER= root
+DB_PASS= 
+DB_NAME= db_zwallet
+
+```
 
 ## Run the app
 
@@ -26,11 +37,18 @@ Development mode
 ```bash
 npm run devServer
 ```
+```bash
+yarn run devServer
+```
 
 Deploy mode
 
 ```bash
 npm start
+```
+
+```bash
+yarn start
 ```
 
 ## Contributing
