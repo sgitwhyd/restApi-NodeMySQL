@@ -5,6 +5,7 @@ module.exports.validateImage = async (req, res, next) => {
 
         let image = req.file
 
+        // CHECK IF NO IMAGE FILE IS UPLOAD
         if (!image) {
             return res.status(400).json({
                 status: false,
