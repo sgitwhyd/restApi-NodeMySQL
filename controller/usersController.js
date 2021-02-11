@@ -40,6 +40,10 @@ module.exports.register = async (req, res) => {
         });
     } catch (error) {
         console.log(error)
+        return res.status(400).json({
+            status: false,
+            error: "Register Error. Please Contact Developers"
+        })
     }
 }
 
@@ -73,6 +77,10 @@ module.exports.uploadFotoUser = async (req, res) => {
         })
     } catch (error) {
         console.log(error)
+        return res.status(400).json({
+            status: false,
+            error: "Update Profile Error. Please Contact Your Developer"
+        })
     }
 }
 
