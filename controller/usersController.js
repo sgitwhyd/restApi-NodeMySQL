@@ -1,35 +1,43 @@
 const User = require('../models/usersModels')
 const fs = require('fs')
 const bcrypt = require('bcrypt')
+// validation
+const { registerValidation } = require("../middleware/UserValidation")
+
+
 
 module.exports.register = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        // REGISTER VALIDATE
+        const { error } = registerValidation(req.body)
+        if (error) return res.status(400).json({
+            status: false,
+            error: error.details[0].message
+        })
 
-        const checkUser = await User.findOne({ where: { email: email } })
-        if (checkUser) {
-            return res.status(400).json({
-                status: false,
-                msg: "Register Failed. Email Exist"
-            })
-        } else {
-            bcrypt.genSalt(10, function (err, salt) {
-                bcrypt.hash(password, salt, async function (err, hash) {
-                    // Store hash in your password DB.
-                    const user = new User({
-                        name: name,
-                        email: email,
-                        password: hash
-                    })
+        // CHECK USER IN DATABASE
+        const emailExist = await User.findOne({ where: { email: req.body.email } })
+        if (emailExist) return res.status(400).json({
+            status: false,
+            error: "Email Exist"
+        })
 
-                    await user.save()
-                    return res.status(200).json({
-                        status: true,
-                        msg: "Register Successfully"
-                    })
-                });
+        bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(req.body.password, salt, async function (err, hash) {
+                // Store hash in your password DB.
+                const user = new User({
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: hash
+                })
+
+                await user.save()
+                return res.status(200).json({
+                    status: true,
+                    msg: "Register Successfully"
+                })
             });
-        }
+        });
     } catch (error) {
         console.log(error)
     }
@@ -44,9 +52,9 @@ module.exports.uploadFotoUser = async (req, res) => {
         if (!user) {
             let path = req.file.path
             await fs.unlinkSync(path)
-            return res.json({
+            return res.status(404).json({
                 status: false,
-                msg: "User Id Not Found"
+                error: "User Id Not Found"
             })
         } else if (user.image !== null) {
             let delPath = `public/uploads/${user.image}`
@@ -61,8 +69,7 @@ module.exports.uploadFotoUser = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            msg: "Profile Updated Successfully",
-            data: imagePath
+            msg: "Profile Updated Successfully"
         })
     } catch (error) {
         console.log(error)
