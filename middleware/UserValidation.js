@@ -9,3 +9,12 @@ module.exports.registerValidation = (data) => {
 
     return validateSchema.validate(data)
 }
+
+module.exports.loginValidation = (data) => {
+    const validateSchema = joi.object({
+        email: joi.string().email().min(6).required(),
+        password: joi.string().required()
+    });
+
+    return validateSchema.validate(data)
+}

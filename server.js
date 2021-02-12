@@ -4,9 +4,9 @@ const db = require('./config/db')
 const router = require('./router/index')
 const bodyParser = require('body-parser')
 const session = require('express-session')
-const path = require('path')
 const morgan = require("morgan")
 const cors = require('cors')
+require('dotenv').config()
 
 app.use(cors())
 app.use(express.urlencoded({
@@ -22,8 +22,8 @@ app.use(session({
 app.use("/public", express.static("./public"))
 app.use('/api/v1', router)
 
-app.listen(4000, (req, res) => {
-    console.log('Server Work')
+app.listen(process.env.PORT, (req, res) => {
+    console.log(`Server running on ${process.env.PORT}`)
 })
 
 // connect to database

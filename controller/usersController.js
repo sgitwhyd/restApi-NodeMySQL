@@ -2,7 +2,9 @@ const User = require('../models/usersModels')
 const fs = require('fs')
 const bcrypt = require('bcrypt')
 // validation
-const { registerValidation } = require("../middleware/UserValidation")
+const { registerValidation, loginValidation } = require("../middleware/UserValidation")
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 
 
@@ -43,6 +45,54 @@ module.exports.register = async (req, res) => {
         return res.status(400).json({
             status: false,
             error: "Register Error. Please Contact Developers"
+        })
+    }
+}
+
+
+module.exports.handleLogin = async (req, res) => {
+    try {
+
+        // LOGIN VALIDATION
+        const { error } = loginValidation(req.body)
+        if (error) return res.status(400).json({
+            status: false,
+            error: error.details[0].message
+        })
+
+        // CHECK EMAIL IN DATABASE
+        const emailExist = await User.findOne({ where: { email: req.body.email } })
+        if (emailExist) {
+            // COMPARE PASSWORD IN DATABASE AND FROM FORM LOGIN
+            await bcrypt.compare(req.body.password, emailExist.password, async (err, isMatch) => {
+                if (isMatch) {
+                    const data = {
+                        id: emailExist.id
+                    }
+                    // INSTASIASI TOKEN
+                    await jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '5h' }, (err, token) => {
+                        if (token) {
+                            return res.status(200).json({
+                                status: true,
+                                msg: "Login Successfully",
+                                token: token
+                            })
+                        }
+
+                        if (err) {
+                            return res.status(400).json({
+                                status: false,
+                                error: "Problem With the token"
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            error: "Something Error When Login. Please Contact Your Developer"
         })
     }
 }
